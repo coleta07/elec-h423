@@ -7,6 +7,8 @@
 
 #define DHTTYPE DHT11
 int buttonState = 0;
+unsigned long debut;
+unsigned long fin;
 
 DHT dht(PIN_SENSORS, DHTTYPE);
 
@@ -18,6 +20,7 @@ void setup() {
   pinMode(PIN_BUTTON, INPUT);
 
   Serial.begin(9600);
+  debut = millis();
 
   dht.begin();
 }
@@ -25,7 +28,6 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   buttonState = digitalRead(PIN_BUTTON);
-
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
   if (buttonState == HIGH) {
     // turn LED on:
@@ -36,8 +38,11 @@ void loop() {
     digitalWrite(PIN_LED_WHITE, LOW);
     digitalWrite(PIN_LED_RED, LOW);
   }
+  fin = millis();
 
-  Serial.println("Temperature = " + String(dht.readTemperature())+" °C");
-  Serial.println("Humidite = " + String(dht.readHumidity())+" %");
-
+  if (fin - debut >= 5000 ){
+    debut = millis();
+    Serial.println("Temperature = " + String(dht.readTemperature())+" °C");
+    Serial.println("Humidite = " + String(dht.readHumidity())+" %");
+  }
 }
